@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  Id           Int      @id @default(autoincrement())
+  Name         String
+  Phone        String
+  Email        String
+  Password     String
+  ProfileImage String   @db.Text
+  Record       Record[]
+  Pets         Pets[]
+  CreateAt     DateTime @default(now())
+  UpdateAt     DateTime @updatedAt
+}
+
+model Record {
+  Id           Int      @id @default(autoincrement())
+  CreateUser   Int
+  PetId        Int
+  User         Users    @relation(fields: [CreateUser], references: [Id])
+  Disease      String
+  Cause        String
+  Solution     String
+  Pet          Pets     @relation(fields: [PetId], references: [Id])
+  CroppedImage Images[]
+  CreateAt     DateTime @default(now())
+  UpdateAt     DateTime @updatedAt
+}
+
+model Images {
+  Id           Int      @id @default(autoincrement())
+  RecordId     Int
+  Disease      String
+  Cause        String
+  Solution     String
+  CroppedImage String   @db.Text
+  PetName      String
+  CreateAt     DateTime @default(now())
+  UpdateAt     DateTime @updatedAt
+  Record       Record   @relation(fields: [RecordId], references: [Id])
+}
+
+model Pets {
+  Id       Int      @id @default(autoincrement())
+  Name     String
+  Age      Int
+  Weight   Int
+  Profile  String?
+  CreateAt DateTime @default(now())
+  UpdateAt DateTime @updatedAt
+  Master   Int
+  User     Users    @relation(fields: [Master], references: [Id])
+  Record   Record[]
+}
