@@ -22,7 +22,7 @@ export const OAUTH_CONFIG: Record<OAuthType, OAuthConfig> = {
     client_id: process.env.KAKAO_CLIENT_ID!,
     client_secret: process.env.KAKAO_CLIENT_SECRET!,
     redirect_uri: process.env.KAKAO_REDIRECT_URI!,
-    scope: "profile account_email",
+    scope: "profile_image profile_nickname",
   },
   google: {
     url: "https://accounts.google.com/o/oauth2/v2/auth",

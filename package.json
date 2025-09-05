@@ -17,6 +17,8 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "generate": "^0.14.0",
+    "generated": "^2.5.0",
     "jsonwebtoken": "^9.0.2",
     "ts-node": "^10.9.2"
   },
