@@ -2,17 +2,22 @@ import express from 'express'
 import cors from 'cors'
 import oauth from './routes/oauthRoutes'
 
-let corsOptions = {
-    origin: 'https://localhost:3000',
-    credentials: true
-}
-
 const app = express()
 require("dotenv").config();
 
 const port = process.env.PORT;
 
-app.use(cors(corsOptions));
+const allowedOrigins = ["http://localhost:3000", "https://localhost:3000"];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 
 app.use(express.json());
 
