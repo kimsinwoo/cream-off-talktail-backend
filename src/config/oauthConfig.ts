@@ -18,6 +18,7 @@ export const OAUTH_CONFIG: Record<OAuthProvider, OAuthConfig> = {
     redirect_uri: process.env.KAKAO_REDIRECT_URI!,
     token_url: "https://kauth.kakao.com/oauth/token",
     user_info_url: "https://kapi.kakao.com/v2/user/me",
+    scope: "profile_nickname profile_image account_email"
   },
   google: {
     client_id: process.env.GOOGLE_CLIENT_ID!,

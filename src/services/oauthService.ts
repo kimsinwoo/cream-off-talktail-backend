@@ -71,7 +71,7 @@ export const findOrCreateUser = async (user: { id: string; email: string; name: 
   if (!existingUser) {
     existingUser = await prisma.user.create({
       data: {
-        oauthId: user.id,
+        oauthId: user.id.toString(),
         email: user.email,
         name: user.name,
         profileImage: user.profileImage,
