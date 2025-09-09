@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import oauth from './routes/oauthRoutes'
+import upload from './routes/imageRoutes'
 
 const app = express()
 require("dotenv").config();
@@ -22,6 +23,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/auth', oauth)
+app.use('/upload', upload)
 
 app.listen(port, () => {
     console.log('서버가 주소는 ' + `http:localhost:${port}` + ' 입니다.')

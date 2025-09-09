@@ -3,6 +3,8 @@ dotenv.config();
 
 export type OAuthProvider = "kakao" | "google" | "naver";
 
+export type AccessToken = string
+
 interface OAuthConfig {
   client_id: string;
   client_secret?: string;

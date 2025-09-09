@@ -8,18 +8,20 @@ datasource db {
 }
 
 model User {
-  id           Int        @id @default(autoincrement())
-  oauthId      String? // 소셜 로그인 고유 ID
-  name         String
-  email        String     @unique
-  password     String?
-  profileImage String?    @db.Text
-  phone        String
-  pets         Pet[]
-  records      Record[]
-  Tracking     Tracking[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id                    Int        @id @default(autoincrement())
+  oauthId               String? // 소셜 로그인 고유 ID
+  name                  String
+  email                 String     @unique
+  password              String?
+  profileImage          String?    @db.Text
+  phone                 String
+  refreshToken          String?    @db.Text
+  refreshTokenExpiresAt DateTime?
+  pets                  Pet[]
+  records               Record[]
+  tracking              Tracking[]
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
 }
 
 model Pet {
@@ -27,6 +29,7 @@ model Pet {
   name      String
   age       Int
   weight    Int
+  gender    String
   profile   String?
   masterId  Int
   user      User     @relation(fields: [masterId], references: [id])
@@ -42,7 +45,6 @@ model Record {
   disease   String
   cause     String
   solution  String
-  images    Image[]
   user      User     @relation(fields: [userId], references: [id])
   pet       Pet      @relation(fields: [petId], references: [id])
   createdAt DateTime @default(now())
@@ -50,16 +52,13 @@ model Record {
 }
 
 model Image {
-  id           Int      @id @default(autoincrement())
-  recordId     Int
-  disease      String
-  cause        String
-  solution     String
-  croppedImage String   @db.Text
-  petName      String
-  record       Record   @relation(fields: [recordId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  cropedImage    String
+  predictedClass String
+  confidence     String
+  classIndex     Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Tracking {

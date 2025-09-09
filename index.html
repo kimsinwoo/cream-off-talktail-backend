@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 Classification</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #f4f7f6;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        #upload-form input[type="file"] {
+            display: none;
+        }
+        .file-label {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .file-label:hover {
+            background-color: #0056b3;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #image-preview {
+            margin-top: 1.5rem;
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: none; /* 기본적으로 숨김 */
+            margin: 1.5rem auto 0;
+        }
+        #result-container {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            color: #333;
+        }
+        #spinner {
+            display: none; /* 기본적으로 숨김 */
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ model_name }}</h1>
+        <p>{{ description }}</p>
+
+        <form id="upload-form">
+            <label for="file-input" class="file-label">이미지 선택</label>
+            <input type="file" id="file-input" name="file" accept="image/*" required>
+            <br>
+            <button type="submit">예측하기</button>
+        </form>
+
+        <img id="image-preview" src="#" alt="Image preview">
+        <div id="spinner"></div>
+        <div id="result-container"></div>
+    </div>
+
+    <script>
+        // JavaScript 코드
+        const form = document.getElementById('upload-form');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const resultContainer = document.getElementById('result-container');
+        const spinner = document.getElementById('spinner');
+
+        // 파일이 선택되면 이미지 미리보기를 보여주는 기능
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+                resultContainer.innerHTML = ''; // 이전 결과 초기화
+            }
+        });
+
+        // 폼이 제출될 때의 동작 (가장 중요한 부분)
+        form.addEventListener('submit', async (event) => {
+            // 1. 폼의 기본 제출 동작(새로고침)을 막습니다.
+            event.preventDefault();
+
+            // 2. FormData 객체를 만들어 파일을 담습니다.
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            // 3. 로딩 시작: 스피너 보이기 및 이전 결과 지우기
+            spinner.style.display = 'block';
+            resultContainer.innerHTML = '';
+            
+            try {
+                // 4. fetch API를 사용해 백엔드('/predict')로 파일을 보냅니다.
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('서버 응답에 문제가 발생했습니다.');
+                }
+                
+                // 5. 서버로부터 받은 JSON 결과를 파싱합니다.
+                const data = await response.json();
+
+                // 6. 결과를 화면에 예쁘게 표시합니다.
+                resultContainer.innerHTML = `
+                    <p><strong>예측 결과:</strong> ${data.predicted_class}</p>
+                    <p><strong>신뢰도:</strong> ${(data.confidence * 100).toFixed(2)}%</p>
+                `;
+
+            } catch (error) {
+                // 에러가 발생하면 에러 메시지를 표시합니다.
+                resultContainer.innerHTML = `<p style="color: red;">예측 실패: ${error.message}</p>`;
+            } finally {
+                // 7. 로딩 끝: 스피너 숨기기
+                spinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
