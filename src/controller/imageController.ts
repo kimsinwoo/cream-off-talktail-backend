@@ -52,7 +52,7 @@ export const handleUpload = async (req: Request, res: Response) => {
         }
       );
 
-      console.log("AI 서버 응답:", response.data);
+      console.log("AI 서버 응답:", response.data)
 
       await prisma.image.create({
         data : {
@@ -62,6 +62,10 @@ export const handleUpload = async (req: Request, res: Response) => {
           classIndex: response.data.class_index
         }
       })
+      return res.status(200).json({
+        message: "파일 업로드 성공",
+        data: response.data,
+      });
     }
 
     // 업로드된 파일 경로 반환
@@ -69,11 +73,6 @@ export const handleUpload = async (req: Request, res: Response) => {
     for (const key in files) {
       files[key].forEach((file) => filePaths.push(file.path));
     }
-
-    return res.status(200).json({
-      message: "파일 업로드 성공",
-      files: filePaths,
-    });
   } catch (error) {
     console.error("업로드 처리 중 오류:", error);
     return res.status(500).json({ message: "업로드 실패", error });
