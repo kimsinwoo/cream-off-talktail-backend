@@ -39,7 +39,7 @@ export const handleUpload = async (req: Request, res: Response) => {
     if (!cropedFile) {
       return res.status(404).json({ message: "croped 파일이 필요합니다." });
     }
-
+    
     // AI 서버에 croped 파일 전송
     const formData = new FormData();
     formData.append("file", fs.createReadStream(cropedFile.path));
