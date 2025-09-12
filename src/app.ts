@@ -1,4 +1,6 @@
 import express from 'express'
+import swaggerSpec from './swagger.config'; // 위에서 만든 설정 파일 불러오기
+import swaggerUi from 'swagger-ui-express';
 import cors from 'cors'
 import oauth from './routes/oauthRoutes'
 import upload from './routes/imageRoutes'
@@ -20,6 +22,7 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // Swagger UI 엔드포인트 설정
 app.use(express.json());
 
 app.use('/auth', oauth)

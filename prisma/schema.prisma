@@ -25,11 +25,10 @@ model User {
 }
 
 model Pet {
-  id        Int      @id @default(autoincrement())
-  name      String
-  age       Int
+  id   Int    @id @default(autoincrement())
+  name String
+  age  Int
   weight    Int
-  gender    String
   profile   String?
   masterId  Int
   user      User     @relation(fields: [masterId], references: [id])
@@ -39,12 +38,9 @@ model Pet {
 }
 
 model Record {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  petId     Int
-  disease   String
-  cause     String
-  solution  String
+  id     Int @id @default(autoincrement())
+  userId Int
+  petId  Int
   user      User     @relation(fields: [userId], references: [id])
   pet       Pet      @relation(fields: [petId], references: [id])
   createdAt DateTime @default(now())
@@ -52,13 +48,14 @@ model Record {
 }
 
 model Image {
-  id             Int      @id @default(autoincrement())
-  cropedImage    String
+  id             Int        @id @default(autoincrement())
+  cropedImage    String     @db.Text
   predictedClass String
   confidence     String
   classIndex     Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  debuging       Debuging?
 }
 
 model Tracking {
@@ -70,4 +67,17 @@ model Tracking {
   url       String
   createdAt DateTime @default(now())
   User      User     @relation(fields: [userId], references: [id])
+}
+
+model Debuging {
+  id        Int     @id @default(autoincrement())
+  a1        Decimal @db.Decimal(30, 15)
+  a2        Decimal @db.Decimal(30, 15)
+  a3        Decimal @db.Decimal(30, 15)
+  a4        Decimal @db.Decimal(30, 15)
+  a5        Decimal @db.Decimal(30, 15)
+  a6        Decimal @db.Decimal(30, 15)
+  imagePath String  @db.Text
+  imageId   Int     @unique
+  Image     Image   @relation(fields: [imageId], references: [id])
 }
